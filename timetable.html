@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study Timetable</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .form-box,
+        .table-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        input,
+        select {
+            padding: 12px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>Study Timetable</h1>
+
+        <p>Plan your weekly study schedule</p>
+
+    </header>
+
+
+    <div class="container">
+
+
+        <!-- Add timetable -->
+
+        <div class="form-box">
+
+            <h2>Add Study Schedule</h2>
+
+            <br>
+
+            <select id="day">
+
+                <option value="">Select Day</option>
+
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+
+            </select>
+
+
+            <input
+                type="text"
+                id="subject"
+                placeholder="Subject"
+            >
+
+
+            <input
+                type="time"
+                id="time"
+            >
+
+
+            <button onclick="addSchedule()">
+                Add Schedule
+            </button>
+
+        </div>
+
+
+        <!-- Timetable -->
+
+        <div class="table-box">
+
+            <h2>My Timetable</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Day</th>
+
+                        <th>Subject</th>
+
+                        <th>Time</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="timetableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let schedules =
+            JSON.parse(
+                localStorage.getItem("studyTimetable")
+            ) || [];
+
+
+        function saveSchedules() {
+
+            localStorage.setItem(
+                "studyTimetable",
+                JSON.stringify(schedules)
+            );
+
+        }
+
+
+        function displaySchedules() {
+
+            const table =
+                document.getElementById("timetableBody");
+
+            table.innerHTML = "";
+
+
+            schedules.forEach(function(schedule, index) {
+
+                const row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>${schedule.day}</td>
+
+                    <td>${schedule.subject}</td>
+
+                    <td>${schedule.time}</td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteSchedule(${index})"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+        }
+
+
+        function addSchedule() {
+
+            const day =
+                document.getElementById("day").value;
+
+            const subject =
+                document.getElementById("subject").value;
+
+            const time =
+                document.getElementById("time").value;
+
+
+            if (
+                day === "" ||
+                subject === "" ||
+                time === ""
+            ) {
+
+                alert("Please fill all fields.");
+
+                return;
+
+            }
+
+
+            schedules.push({
+
+                day: day,
+
+                subject: subject,
+
+                time: time
+
+            });
+
+
+            saveSchedules();
+
+            displaySchedules();
+
+
+            document.getElementById("day").value = "";
+
+            document.getElementById("subject").value = "";
+
+            document.getElementById("time").value = "";
+
+        }
+
+
+        function deleteSchedule(index) {
+
+            schedules.splice(index, 1);
+
+            saveSchedules();
+
+            displaySchedules();
+
+        }
+
+
+        displaySchedules();
+
+    </script>
+
+</body>
+
+</html>
